@@ -1,0 +1,6 @@
+/cache/
+/config/development/
+
+/react-app/build
+node_modules/
+.idea/

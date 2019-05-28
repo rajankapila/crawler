@@ -1,0 +1,146 @@
+.crawler__result {
+}
+
+.crawler__result-stats {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.crawler__result-stat {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  padding: 0 1rem;
+  border-bottom: 1px solid #ccc;
+  line-height: 2.5;
+
+  @media only screen and (max-width: 760px) {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    line-height: 1.5;
+    padding: 0.25rem;
+  }
+}
+
+.crawler__result-stat {
+  &:last-child {
+    border: none;
+  }
+}
+
+.crawler__result-stat {
+  label {
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+}
+
+.crawler__result-stat-value {
+  @media only screen and (max-width: 760px) {
+    text-align: right;
+  }
+}
+
+.crawler__result-table-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  @media only screen and (max-width: 760px) {
+    margin-top: 1rem;
+  }
+}
+
+.crawler__result-table {
+  width: 100%;
+  border-top: 1px solid #ccc;
+  padding: 1rem;
+
+  @media only screen and (max-width: 760px) {
+    padding: 0.25rem;
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+  }
+
+  table {
+    width: 100%;
+  }
+
+  tr {
+    &:nth-of-type(odd) {
+      background: #eee;
+    }
+  }
+
+  th {
+    background: #333;
+    color: #fff;
+    font-weight: bold;
+    padding-top: 0.5rem;
+    border: 1px solid #ccc;
+    text-align: left;
+    padding-left: 0.5rem;
+  }
+
+  thead {
+    tr {
+      @media only screen and (max-width: 760px) {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+    }
+  }
+
+  tr {
+    @media only screen and (max-width: 760px) {
+      border: 1px solid #ccc;
+    }
+  }
+
+  td {
+    padding-top: 0.5rem;
+    border: 1px solid #ccc;
+    text-align: left;
+    padding-left: 0.5rem;
+
+    @media only screen and (max-width: 760px) {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 20%;
+
+      &:before {
+        position: absolute;
+
+        top: 0.5rem;
+        left: 0.5rem;
+        width: 45%;
+        padding-right: 0.5rem;
+        white-space: nowrap;
+        font-weight: bold;
+        clear: both;
+      }
+
+      &:nth-of-type(1):before {
+        display: none;
+      }
+
+      &:nth-of-type(2):before {
+        content: "Code";
+      }
+
+      &.crawler__result-table-url {
+        padding-left: 0.5rem;
+      }
+    }
+  }
+}
