@@ -1,5 +1,6 @@
 <?php
 
+namespace Crawler;
 
 class Crawl {
 

@@ -1,32 +1,35 @@
 <?php
 
+namespace Crawler;
+
 /**
  * Class CrawlerHelper - class to crawl web pages
  */
+
 class CrawlerHelper {
 
-    private $_crawls;
-    private $_linksCrawled;
-    private $_images;
-    private $_linksInternal;
-    private $_linksExternal;
-    private $_totalLinksCrawled;
-    private $_totalTime;
-    private $_totalWords;
-    private $_totalTitleLength;
-    private $_baseURL;
+    private $crawls;
+    private $linksCrawled;
+    private $images;
+    private $linksInternal;
+    private $linksExternal;
+    private $totalLinksCrawled;
+    private $totalTime;
+    private $totalWords;
+    private $totalTitleLength;
+    private $baseURL;
 
     function __construct() {
-        $this->_crawls            = array();
-        $this->_images            = array();
-        $this->_linksCrawled      = array();
-        $this->_linksInternal     = array();
-        $this->_linksExternal     = array();
-        $this->_totalLinksCrawled = 0;
-        $this->_totalTime         = 0;
-        $this->_totalWords        = 0;
-        $this->_totalTitleLength  = 0;
-        $this->_baseURL           = '';
+        $this->crawls            = array();
+        $this->images            = array();
+        $this->linksCrawled      = array();
+        $this->linksInternal     = array();
+        $this->linksExternal     = array();
+        $this->totalLinksCrawled = 0;
+        $this->totalTime         = 0;
+        $this->totalWords        = 0;
+        $this->totalTitleLength  = 0;
+        $this->baseURL           = '';
     }
 
     /**
@@ -38,21 +41,21 @@ class CrawlerHelper {
      */
 
     public function crawl( $baseUrl, $link, $numberToCrawl = 5 ) {
-        $this->_baseURL = $baseUrl;
+        $this->baseURL = $baseUrl;
 
         //crawl first link
-        $this->_crawlURL( $link );
+        $this->crawlURL( $link );
 
         //crawl other internal links found until number of links to crawl has been crawled
         $counter = 0;
-        while ( $this->_totalLinksCrawled < $numberToCrawl ) {
-            if ( isset( $this->_linksInternal[ $counter ] ) ) {
+        while ( $this->totalLinksCrawled < $numberToCrawl ) {
+            if ( isset( $this->linksInternal[ $counter ] ) ) {
                 //get next link
-                $nextLink = $this->_linksInternal[ $counter ];
+                $nextLink = $this->linksInternal[ $counter ];
 
                 //check to make sure not already crawled
-                if ( ! in_array( $nextLink, $this->_linksCrawled ) ) {
-                    $this->_crawlURL( $nextLink );
+                if ( ! in_array( $nextLink, $this->linksCrawled ) ) {
+                    $this->crawlURL( $nextLink );
                 }
 
                 $counter ++;
@@ -62,10 +65,10 @@ class CrawlerHelper {
         }
 
         //create response
-        $crawlerResponse = new CrawlerResponse( $this->_crawls, $this->_totalLinksCrawled );
-        $crawlerResponse->setImageCount( $this->_getNumberOfUniqueImages() );
-        $crawlerResponse->setLinkExternalCount( $this->_getNumberOfUniqueExternalURLs() );
-        $crawlerResponse->setLinkInternalCount( $this->_getNumberOfUniqueInternalURLs() );
+        $crawlerResponse = new CrawlerResponse( $this->crawls, $this->totalLinksCrawled );
+        $crawlerResponse->setImageCount( $this->getNumberOfUniqueImages() );
+        $crawlerResponse->setLinkExternalCount( $this->getNumberOfUniqueExternalURLs() );
+        $crawlerResponse->setLinkInternalCount( $this->getNumberOfUniqueInternalURLs() );
 
         return $crawlerResponse;
     }
@@ -76,24 +79,24 @@ class CrawlerHelper {
      * @return int
      */
 
-    private function _getNumberOfUniqueImages() {
-        return count( $this->_images );
+    private function getNumberOfUniqueImages() {
+        return count( $this->images );
     }
 
     /**
      * @return int - returns number internal links found
      */
 
-    private function _getNumberOfUniqueInternalURLs() {
-        return count( $this->_linksInternal );
+    private function getNumberOfUniqueInternalURLs() {
+        return count( $this->linksInternal );
     }
 
     /**
      * @return int - returns number of unique external links
      */
 
-    private function _getNumberOfUniqueExternalURLs() {
-        return count( $this->_linksExternal );
+    private function getNumberOfUniqueExternalURLs() {
+        return count( $this->linksExternal );
     }
 
     /**
@@ -102,7 +105,7 @@ class CrawlerHelper {
      * @return int
      */
 
-    private function _getTitleLength( $content ) {
+    private function getTitleLength( $content ) {
         //load cotent in DOMDocument object
         $dom = new DOMDocument( '1.0' );
         @$dom->loadHTML( $content );
@@ -119,7 +122,7 @@ class CrawlerHelper {
      * @param $content - content to check for unique images
      */
 
-    private function _getImages( $content ) {
+    private function getImages( $content ) {
         //load cotent in DOMDocument object
         $dom = new DOMDocument( '1.0' );
         @$dom->loadHTML( $content );
@@ -129,8 +132,8 @@ class CrawlerHelper {
         //loop through and save unique image urls
         foreach ( $images as $element ) {
             $src = trim( $element->getAttribute( "src" ) );
-            if ( $src && ! in_array( $src, $this->_images ) ) {
-                $this->_images[] = $src;
+            if ( $src && ! in_array( $src, $this->images ) ) {
+                $this->images[] = $src;
             }
         }
     }
@@ -139,7 +142,7 @@ class CrawlerHelper {
      * @param $content - content to find internal and external links
      */
 
-    private function _loadLinks( $content ) {
+    private function loadLinks( $content ) {
         //load cotent in DOMDocument object
         $dom = new DOMDocument( '1.0' );
         @$dom->loadHTML( $content );
@@ -153,13 +156,13 @@ class CrawlerHelper {
             //check to make href is not empty and not a anchor link
             if ( $href && strpos( $href, "#" ) !== 0 ) {
                 //check to see if link internal
-                if ( strpos( $href, $this->_baseURL ) === 0 || strpos( $href, "/" ) === 0 ) {
-                    if ( ! in_array( $href, $this->_linksInternal ) ) {
-                        $this->_linksInternal[] = $href;
+                if ( strpos( $href, $this->baseURL ) === 0 || strpos( $href, "/" ) === 0 ) {
+                    if ( ! in_array( $href, $this->linksInternal ) ) {
+                        $this->linksInternal[] = $href;
                     }
                 } else {
-                    if ( ! in_array( $href, $this->_linksExternal ) ) {
-                        $this->_linksExternal[] = $href;
+                    if ( ! in_array( $href, $this->linksExternal ) ) {
+                        $this->linksExternal[] = $href;
                     }
                 }
             }
@@ -172,8 +175,8 @@ class CrawlerHelper {
      * @return string
      */
 
-    private function _createURL( $link ) {
-        return $this->_baseURL . $link;
+    private function createURL( $link ) {
+        return $this->baseURL . $link;
     }
 
     /**
@@ -183,7 +186,7 @@ class CrawlerHelper {
      * @return mixed - returns word count
      */
 
-    private function _getWordCount( $content ) {
+    private function getWordCount( $content ) {
         //hack to remove script tags, was having trouble removing by tag in DOMDocument object
         $content = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $content );;
 
@@ -206,28 +209,28 @@ class CrawlerHelper {
      * @param $link - link to crawl
      */
 
-    private function _crawlURL( $link ) {
+    private function crawlURL( $link ) {
         //create url from link
-        $url = $this->_createURL( $link );
+        $url = $this->createURL( $link );
         //get url content
-        $crawl = $this->_curlURL( $url );
+        $crawl = $this->curlURL( $url );
 
         //add link to crawled list
-        $this->_linksCrawled[] = $link;
+        $this->linksCrawled[] = $link;
         //increase links crawled count
-        $this->_totalLinksCrawled ++;
+        $this->totalLinksCrawled ++;
         //get links in content
-        $this->_loadLinks( $crawl->getResponse() );
+        $this->loadLinks( $crawl->getResponse() );
         //get images in content
-        $this->_getImages( $crawl->getResponse() );
+        $this->getImages( $crawl->getResponse() );
 
         //set total words counted
-        $crawl->setTotalWords( $this->_getWordCount( $crawl->getResponse() ) );
+        $crawl->setTotalWords( $this->getWordCount( $crawl->getResponse() ) );
 
         //set title length
-        $crawl->setTitleLength( $this->_getTitleLength( $crawl->getResponse() ) );
+        $crawl->setTitleLength( $this->getTitleLength( $crawl->getResponse() ) );
 
-        $this->_crawls[] = $crawl;
+        $this->crawls[] = $crawl;
     }
 
     /**
@@ -236,7 +239,7 @@ class CrawlerHelper {
      * @return Crawl
      */
 
-    private function _curlURL( $url ) {
+    private function curlURL( $url ) {
         $errorMessage = "";
 
         //set url to get

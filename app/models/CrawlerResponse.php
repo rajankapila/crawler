@@ -1,5 +1,7 @@
 <?php
 
+namespace Crawler;
+
 /**
  * Class CrawlerResponse - Response object to be send back via ajax to client with crawl data
  */

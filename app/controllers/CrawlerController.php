@@ -1,5 +1,7 @@
 <?php
 
+use Crawler;
+
 /**
  * Class CrawlerController - ajax controller which sends back crawled page data
  */
